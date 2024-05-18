@@ -34,7 +34,6 @@ trading_keywords = {'bankex', 'Nifty', 'Sensex', 'MIDCAPNIFTY', 'BankNifty', 'FI
 
 can_mispell_words = {'bankex', 'nifty', 'sensex', 'midcapnifty', 'banknifty', 'finnifty', 'above'}
 
-
 # Convert keywords to lowercase
 trading_keywords = [keyword.lower() for keyword in trading_keywords]
 
@@ -48,8 +47,15 @@ ALLOWED_CHANNEL_IDS = {
     -1001170839460
 }
 
-# Telethon client setup
-client = TelegramClient('anon', api_id, api_hash)
+proxy = ('socks5', '192.168.0.1', 1080, True, None, None)  # No username and password for free proxies
+
+# Telethon client setup with proxy
+client = TelegramClient(
+    'anon',
+    api_id,
+    api_hash,
+    proxy=proxy
+)
 
 def has_trading_keywords(message):
     # Convert message to lowercase for case-insensitive matching
@@ -76,7 +82,6 @@ def has_trading_keywords(message):
 
     return False
 
-
 async def get_channel_info(channel_id):
     try:
         entity = await client.get_entity(channel_id)
@@ -84,7 +89,6 @@ async def get_channel_info(channel_id):
     except Exception as e:
         logging.error(f"Error getting channel info for ID {channel_id}: {e}")
         return None
-
 
 @client.on(events.NewMessage)
 async def my_event_handler(event):
@@ -116,7 +120,6 @@ async def my_event_handler(event):
 
     else:
         logging.info("Not an option call: %s", message_text)
-
 
 client.start()
 client.run_until_disconnected()
